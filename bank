@@ -1,0 +1,33 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+
+fileNames = ['NB.csv', 'SM.csv', 'PO.csv', 'SI.csv']
+Entities = ['Nuva Bila', "Step M", "Polivtsi", "Sitch"]
+dfs = [];
+
+for i in range(0, len(fileNames) - 1):
+    try:
+        path = os.path.join(os.getcwd(), fileNames[i])
+
+        df = pd.read_csv(path, delimiter=';', encoding="1251", index_col=17)
+
+        df.set_index('Гривневе покриття')
+
+        df["Дата операцiї"] = pd.to_datetime(df["Дата операцiї"])
+        df["Дата документа"] = pd.to_datetime(df["Дата документа"])
+        df['Entity'] = Entities[i]
+
+        dfs.append(df)
+    except Exception:
+        print('Error on file ', fileNames[i])
+
+df_all = pd.concat(dfs)
+
+df_all.iloc[2]
+
+for i in range(0, len(Entities) - 1):
+    writer = pd.ExcelWriter('output.xlsx', )
+    df_all.to_excel(writer, 'Sheet1')
+    writer.save()
